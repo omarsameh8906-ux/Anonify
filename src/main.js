@@ -1,0 +1,25 @@
+
+import express from 'express'
+import { authenticationController, messageController, userController } from './modules/index.js'
+import { globalErrorHandling } from './middleware/index.js'
+import { bootsrabDB } from './DB/connection.db.js'
+import { PORT } from './config.js'
+import { decryption, encryption } from './common/security/encryption.security.js'
+const app = express()
+bootsrabDB(app,PORT)
+app.use(express.json())
+const encryptValue = await encryption("omar")
+const decryptValue = await decryption(encryptValue)
+console.log({encryptValue,decryptValue});
+
+app.all("/", (req, res) => res.status(200).send({ message: "Welcome to BE API 🌸" }))
+
+app.use("/auth", authenticationController)
+app.use("/message", messageController)
+app.use("/user", userController)
+
+app.all("{/*dummy}", (req, res) => res.status(404).send({ message: "Invalid application routing" }))
+
+app.use(globalErrorHandling)
+
+
