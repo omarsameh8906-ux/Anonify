@@ -8,9 +8,7 @@ import { decryption, encryption } from './common/security/encryption.security.js
 const app = express()
 bootsrabDB(app,PORT)
 app.use(express.json())
-const encryptValue = await encryption("omar")
-const decryptValue = await decryption(encryptValue)
-console.log({encryptValue,decryptValue});
+
 
 app.all("/", (req, res) => res.status(200).send({ message: "Welcome to BE API 🌸" }))
 

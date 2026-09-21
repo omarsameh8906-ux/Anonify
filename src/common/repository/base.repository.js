@@ -28,7 +28,7 @@ id,
 model,
 options = {}
 }={})=>{
-const doc = await model.findById(id);
+const doc =  model.findById(id);
 if(options.select){
     doc.select(options.select)
 }
@@ -82,4 +82,31 @@ export const createOne = async ({
 }={})=>{
     const doc = await create({model,data:[data],options})
     return doc
+}
+export const findByIdAndUpdate = async ({
+    model,
+    id,
+    update,
+    options = {}
+} = {}) => {
+
+    const doc = model.findByIdAndUpdate(
+        id,
+        { ...update, $inc: { __v: 1 } },
+        options
+    );
+
+    if (options.select) {
+        doc.select(options.select);
+    }
+
+    if (options.populate) {
+        doc.populate(options.populate);
+    }
+
+    if (options.lean) {
+        doc.lean();
+    }
+
+    return await doc.exec();
 }

@@ -22,6 +22,14 @@ export const NotfoundException = (message = "Notfound", extra = {})=>{
         }
     })
 }
+export const BadException = (message = "bad request exception", extra = {})=>{
+    return ApplicationException({
+        message,
+        options:{
+            cause:{status:400,...extra}
+        }
+    })
+}
 export const UnauthorizedException = (message = "Unauthorized", extra = {})=>{
     return ApplicationException({
         message,

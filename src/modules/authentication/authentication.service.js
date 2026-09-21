@@ -3,7 +3,9 @@ import { create, createOne, findOne } from "../../common/repository/base.reposit
 import { decryption, encryption } from "../../common/security/encryption.security.js"
 import { compare, hash } from "../../common/security/hash.security.js"
 import { userModel } from "../../DB/model/user.model.js"
+import jwt from "jsonwebtoken"
 import bcrypt from 'bcrypt'
+import { createLoginCredentials, createToken } from "../../common/security/token.security.js"
 export const signup = async ({username,email,password,phone})=>{
     const duplicatedAccount = await findOne({
         model:userModel,
@@ -20,14 +22,14 @@ export const signup = async ({username,email,password,phone})=>{
         data:{
             username,
             email,
-            password: await hash({plainText:password}),
+            password: await hash(password),
             phone:await encryption(phone)
         }, 
     })
     return user
 } 
 
-export const login = async ({email,password}) => {
+export const login = async ({email,password},issuer) => {
     const account = await findOne({
         model:userModel,
         filter:{email},
@@ -36,10 +38,8 @@ export const login = async ({email,password}) => {
     if (!account) {
     throw NotfoundException()
     }
-    const match = await compare({plainText:password,cipherText:account.password})
-    if(!match){
-        throw NotfoundException("not exist")
-    }
-    account.phone = await decryption(account.phone)
-    return account
+    const match = await compare(password,account.password)
+    if(!match) throw NotfoundException("Not Exist")
+
+return await createLoginCredentials({user:account,issuer})
 }
