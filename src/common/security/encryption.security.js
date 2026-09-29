@@ -6,7 +6,6 @@ export const encryption = async (plainText)=>{
     const cipher = crypto.createCipheriv("aes-256-cbc",ENC_KEY,iv)
     let encryptData = cipher.update(plainText,"utf-8","hex")
     encryptData += cipher.final("hex")
-    console.log({cipher,encryptData});
     return `${iv.toString("hex")}::${encryptData}`
     
 }

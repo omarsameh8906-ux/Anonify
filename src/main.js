@@ -5,8 +5,11 @@ import { globalErrorHandling } from './middleware/index.js'
 import { bootsrabDB } from './DB/connection.db.js'
 import { PORT } from './config.js'
 import { decryption, encryption } from './common/security/encryption.security.js'
+
 const app = express()
-bootsrabDB(app,PORT)
+await bootsrabDB(app,PORT)
+
+
 app.use(express.json())
 
 
