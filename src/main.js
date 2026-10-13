@@ -1,0 +1,31 @@
+
+import express from 'express'
+import { authenticationController, messageController, userController } from './modules/index.js'
+import { globalErrorHandling } from './middleware/index.js'
+import { bootsrabDB } from './DB/connection.db.js'
+import { PORT } from './config.js'
+import { sendEmail } from './common/utils/index.js'
+import { resolve } from "node:path"
+import cors from "cors"
+
+
+const app = express()
+await bootsrabDB(app,PORT)
+
+
+app.use(express.json() , cors())
+app.use("/uploads" , express.static("./uploads"))
+
+
+app.all("/", (req, res) => res.status(200).send({ message: "Welcome to BE API 🌸" }))
+
+app.use("/auth", authenticationController)
+app.use("/message", messageController)
+app.use("/user", userController)
+
+app.all("{/*dummy}", (req, res) => res.status(404).send({ message: "Invalid application routing" }))
+
+app.use(globalErrorHandling)
+
+
+
