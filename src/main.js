@@ -3,21 +3,36 @@ import express from 'express'
 import { authenticationController, messageController, userController } from './modules/index.js'
 import { globalErrorHandling } from './middleware/index.js'
 import { bootsrabDB } from './DB/connection.db.js'
-import { PORT } from './config.js'
-import { sendEmail } from './common/utils/index.js'
-import { resolve } from "node:path"
+import { ORIGINS, PORT } from './config.js'
 import cors from "cors"
-
+import helmet from "helmet"
+import { generateRateLimiter } from './common/utils/limiter.js'
+import morgan from "morgan"
 
 const app = express()
 await bootsrabDB(app,PORT)
 
+var corsOptions = {
+  origin: function (origin, callback) {
+    if(!ORIGINS.includes(origin)){
+        callback(new Error("unauthorized origin" , {cause:{status: 401}} , ORIGINS))
+    }else{
+        callback(null , ORIGINS)
+    }
+  }
+}
 
-app.use(express.json() , cors())
+
+const limiter = generateRateLimiter({limit: 1000})
+
+app.set("trust proxy" , true)
+app.use(morgan("dev") , helmet() , express.json() , cors())
 app.use("/uploads" , express.static("./uploads"))
 
 
 app.all("/", (req, res) => res.status(200).send({ message: "Welcome to BE API 🌸" }))
+
+
 
 app.use("/auth", authenticationController)
 app.use("/message", messageController)

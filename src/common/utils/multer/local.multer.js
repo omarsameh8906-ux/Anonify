@@ -4,7 +4,6 @@ import {fileTypeFromBuffer} from "file-type"
 import {mkdir, writeFile} from "node:fs/promises"
 import {resolve} from "node:path"
 import { BadException } from "../../exceptions/error.exception.js"
-import { error } from "node:console"
 
 export const fileValidation = {
     image:["image/jpg" , "image/jpeg" , "image/png"],
@@ -26,9 +25,10 @@ export const processFile =async ({customPath= "general" , validation = [], file}
 
         const customFolderPath = resolve(`./uploads/${customPath}`) 
         await mkdir(customFolderPath , {recursive:true})
-        const uniqueFilePath = `uploads/${customPath}/${randomUUID()}.${result.ext}`
-        await writeFile(resolve(`./${uniqueFilePath}`) , file.buffer )
-        return uniqueFilePath ;
+        const uniqueFileName = `uploads/${customPath}/${randomUUID()}.${result.ext}`
+        await writeFile(resolve(`./${uniqueFileName}`) , file.buffer )
+        file.path = uniqueFileName
+        return file ;
       
 
     }

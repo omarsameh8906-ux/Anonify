@@ -45,7 +45,7 @@ model,
 options = {},
 filter = {}
 }={})=>{
-const doc = await model.find(filter);
+const doc =  model.find(filter);
 if(options.select){
     doc.select(options.select)
 }
@@ -55,6 +55,9 @@ if(options.populate){
 if(options.skip){
     doc.skip(options.skip)
 }
+if(options.sort){
+    doc.sort(options.sort)
+}
 if(options.limit){
     doc.limit(options.limit)
 }
@@ -62,6 +65,49 @@ if(options.lean){
     doc.lean()
 }
 return await doc.exec()
+}
+export const countDocument = async ({
+model,
+filter = {}
+}={})=>{
+return await  model.countDocuments(filter);
+
+}
+export const paginate = async ({
+model,
+page = 1 ,
+limit = 5 ,
+filter = {},
+options = {},
+
+
+
+
+}={})=>{
+
+    const skip = (page-1) * limit ;
+    const count = await countDocument({filter , model})
+    const pages = Math.ceil(count / limit)
+    const docs = await find({
+        model ,
+        filter, 
+        options:{
+            ...options,
+            skip,
+            limit
+        }
+        
+        
+        })
+
+ 
+    return {count , limit , pages , currentPage:page , docs};
+}
+export const deleteOne = async ({
+    model,
+    filter = {}
+} = {}) => {
+    return await model.deleteOne(filter || {})
 }
 export const updateOne = async ({
     model,
@@ -109,4 +155,10 @@ export const findByIdAndUpdate = async ({
     }
 
     return await doc.exec();
+}
+export const insertMany = async ({
+    data,
+    model
+}) =>{
+    return  (await model.insertMany(data))
 }

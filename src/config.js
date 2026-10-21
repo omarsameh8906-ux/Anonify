@@ -19,7 +19,9 @@ export const REFRESH_USER_TOKEN_SIGNATURE = process.env.REFRESH_USER_TOKEN_SIGNA
 export const REFRESH_ADMIN_TOKEN_SIGNATURE = process.env.REFRESH_ADMIN_TOKEN_SIGNATURE
 export const REFRESH_TOKEN_EXPIRES_IN = parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN?? "31536000")
 
-export const WEB_CLIENT_IDS = process.env.WEB_CLIENT_IDS.split(",")
+export const WEB_CLIENT_IDS = process.env.WEB_CLIENT_IDS.split(",") || []
+export const ORIGINS = process.env.ORIGINS.split(",") || []
+
 
 export const REDIS_URI = process.env.REDIS_URI
 

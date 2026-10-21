@@ -1,5 +1,4 @@
 import {z} from "zod";
-import { GenderEnum } from "../../common/enum/user.gender.js";
 import { generalValidationFields } from "../../common/general.validation.js";
 
 

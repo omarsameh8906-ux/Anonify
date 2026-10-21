@@ -46,9 +46,7 @@ try {
     attachments
   });
 
-  console.log("Message sent: %s", info.messageId);
-
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+ 
 } catch (err) {
  
   console.error("Error while sending mail:", err.code, err.responseCode, err.message)

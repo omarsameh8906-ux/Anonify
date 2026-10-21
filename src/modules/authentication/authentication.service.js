@@ -201,7 +201,7 @@ export const login = async ({email,password},issuer) => {
         filter:{email,provider:ProviderEnum.SYSTEM , confirmEmail:{$exists:true}},
     })
 
-console.log(account)
+
     if (!account) {
     throw NotfoundException()
     }

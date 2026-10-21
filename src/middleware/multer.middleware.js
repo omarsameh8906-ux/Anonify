@@ -1,6 +1,6 @@
 import { processArray, processFields, processFile } from "../common/utils/index.js"
 
-export const localMulterMiddleware = ({isRequired = true , customPath = "general" ,multerMiddleware,validation = []})=>{
+export const uploadMiddleware = ({isRequired = true , customPath = "general" ,multerMiddleware,validation = []})=>{
         return async (req,res,next)=>{
          
 

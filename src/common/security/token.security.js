@@ -52,32 +52,23 @@ export const decodeToken = async ({
     authorization = "",
     tokenType = TokenTypeEnum.ACCESS
 } = {}) => {
-   
-    const [bearer, token] = authorization.split(" ")
 
-if (bearer !== "Bearer" || !token) {
-    throw BadException("Missing Token Failed")
-}
 
-const decoded = jwt.decode(token)
+    if (!authorization) {
+        throw BadException("Missing Token Failed")
+    }
 
-if (!decoded?.aud?.length) {
-    throw BadException("Missing Token Failed")
-}
+    const decoded = jwt.decode(authorization)
 
-const payload = await verifyToken({
-    token,
-    secret: await getSignature({ tokenType, role: decoded.aud[0] })
-})
-    // const decoded = jwt.decode(authorization)
+    if (!decoded?.aud?.length) {
+        throw BadException("Missing Token Failed")
+    }
 
-    // if (!decoded?.aud?.length) {
-    //     throw BadException("Missing Token Failed")
-    // }
-    // const payload = await verifyToken({
-    //     token: authorization,
-    //     secret: await getSignature({ tokenType, role: decoded.aud[0] })
-    // })
+    const payload = await verifyToken({
+        token: authorization,
+        secret: await getSignature({ tokenType, role: decoded.aud[0] })
+    })
+
     if (!payload?.sub) {
         throw BadException("missing token payload")
     }
@@ -88,7 +79,7 @@ const payload = await verifyToken({
     if (!user) {
         throw NotfoundException("Invalid user")
     }
-    if((user.changeCredentialsTime?.getTime() ?? 0) > payload.iat * 1000){
+    if ((user.changeCredentialsTime?.getTime() ?? 0) > payload.iat * 1000) {
         throw UnauthorizedException("Expired Login Credentials")
     }
     return { user, payload }

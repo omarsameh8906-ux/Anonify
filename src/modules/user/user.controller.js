@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { fileValidation, localFileUpload, successResponse } from "../../common/utils/index.js";
 import { logout, profile, profileImage, rotateToken, update } from "./user.service.js";
-import { authentication, authorization } from "../../middleware/authentication.middleware.js";
+import { authentication} from "../../middleware/authentication.middleware.js";
 import { TokenTypeEnum } from "../../common/enum/security.enum.js";
-import { localMulterMiddleware } from "../../middleware/multer.middleware.js";
+import { uploadMiddleware } from "../../middleware/multer.middleware.js";
 const router = Router()
 
 router.post("/profile-image",
        authentication(),
-  localMulterMiddleware({
+  uploadMiddleware({
         isRequired:true ,
         customPath: "Users" ,
         multerMiddleware:localFileUpload({fileSize:2}).single("attachment"),

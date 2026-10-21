@@ -8,7 +8,9 @@ export const validation = (schema)=>{
      const validationResult = schema(language).safeParse({
         body:req.body,
         query:req.query,
-        params:req.params
+        params:req.params,
+        files:req.files,
+        file:req.file
      })
     if(!validationResult.success){
         throw BadException("Validation Error",validationResult.error.issues)
