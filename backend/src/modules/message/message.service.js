@@ -6,7 +6,7 @@ import * as userRepository from "../../common/repository/user.repository.js"
 export const createMessage = async ({content , receiverId}= {} , files = [] , user = undefined)=>{
    
 
-    const checkReceiverId = await userRepository.findUserById({
+    const checkReceiverId = await userRepository.findById({
         id: receiverId
         })
 
@@ -45,10 +45,19 @@ export const getAllMessages = async ({type , page , limit} = {} , user)=>{
 
 
     
- const data = await messageRepository.paginate({ page , limit , filter , options:{createdAt: -1}})
-
- 
-    return data;
+ const data = await messageRepository.paginate({
+  page,
+  limit,
+  filter,
+  options: {
+    sort: { createdAt: -1 },
+    populate: {
+      path: "senderId",
+      select: "firstName lastName email image"
+    }
+  }
+});
+return data
 }
 
 export const getMessage = async ({messageId} , user)=>{

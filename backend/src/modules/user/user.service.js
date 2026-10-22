@@ -16,7 +16,7 @@ export const update = async (user, data) => {
 
 export const profileImage = async (user , file)=>{
     if (file) {
-      user.image = file?.finalPath ;
+      user.image = file.path; ;
       await user.save() ;  
     }
       

@@ -25,8 +25,8 @@ var corsOptions = {
 
 const limiter = generateRateLimiter({limit: 1000})
 
-app.set("trust proxy" , true)
-app.use(morgan("dev") , helmet() , express.json() , cors())
+app.set("trust proxy" , 1)
+app.use(morgan("dev") , helmet({crossOriginResourcePolicy: { policy: "cross-origin" },}) , express.json() , cors())
 app.use("/uploads" , express.static("./uploads"))
 
 

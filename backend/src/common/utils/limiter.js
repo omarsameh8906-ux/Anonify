@@ -33,7 +33,8 @@ export const generateRateLimiter = ({
 
   limit: async function(req) {
     const country = await fromWhere(req.ip)
-    return country?.country == "EG" ? limit : 0
+
+    return country?.country == "EG" ? limit : 50
   } ,
   keyGenerator: function(req){
     const ip = ipKeyGenerator(req.ip , 52)
@@ -44,7 +45,7 @@ export const generateRateLimiter = ({
       try {
         const count = await client.incr(key)
         if(count === 1 ){
-          await client.expire(key , 60)
+          await client.expire(key , ttl * 60)
         }
         cb(null , count)
       } catch (err) {

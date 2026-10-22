@@ -28,7 +28,7 @@ export const processFile =async ({customPath= "general" , validation = [], file}
         const uniqueFileName = `uploads/${customPath}/${randomUUID()}.${result.ext}`
         await writeFile(resolve(`./${uniqueFileName}`) , file.buffer )
         file.path = uniqueFileName
-        return file ;
+        return uniqueFileName ;
       
 
     }
