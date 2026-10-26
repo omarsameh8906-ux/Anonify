@@ -18,10 +18,32 @@ export default function Inbox() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    userApi.me()
-      .then((u) => setLink(`${location.origin}${location.pathname}#/u/${u._id || u.id}`))
-      .catch(() => {});
-  }, []);
+  const getMyLink = async () => {
+    try {
+      const response = await userApi.me();
+
+      console.log("USER RESPONSE:", response);
+
+      const user = response?.data?.user ?? response?.user ?? response?.data ?? response;
+
+      const userId = user?._id || user?.id;
+
+      if (!userId) {
+        throw new Error("User ID not found in profile response");
+      }
+
+      const personalLink =
+        `${window.location.origin}${window.location.pathname}#/u/${userId}`;
+
+      setLink(personalLink);
+    } catch (err) {
+      console.error("Failed to generate personal link:", err);
+      setError(err.message);
+    }
+  };
+
+  getMyLink();
+}, []);
 
   const load = useCallback(async () => {
     setData(null);
