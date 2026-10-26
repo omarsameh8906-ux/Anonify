@@ -83,12 +83,12 @@ const sendEmailOtp = async ({email , subject , expiresIn = 120 , maxTrials = 3 ,
   if(currentTrials == 3){
     await expire({key:UserEmailTrialsKey({email,subject}) , ttl:blockInSeconds})
   }
-     emailEvent.emit("sendEmail" , {recipients:{to:email} , subject:EmailSubjectEnum.CONFIRM_EMAIL , data:{code},title:title??subject})
+     emailEvent.emit("sendEmail" , {recipients:{to:email} , subject , data:{code},title:title??subject})
 
 } 
 
 
-export const signup = async ({username,email,password,phone})=>{
+export const signup = async ({username,email,password,phone,DOB,gender})=>{
     const duplicatedAccount = await findOne({
         model:userModel,
         filter:{email},
@@ -106,7 +106,9 @@ export const signup = async ({username,email,password,phone})=>{
             username,
             email,
             password: await hash(password),
-            phone:await encryption(phone)
+            phone:await encryption(phone),
+            DOB,
+            gender
 
         }, 
     })
@@ -150,28 +152,54 @@ return
 
 }
     
-export const requestForgetPasswordCode = async ({email})=>{
+export const requestForgetPasswordCode = async ({ email }) => {
     const account = await findOne({
-        
-        model:userModel,filter:{
+        model: userModel,
+        filter: {
             email,
-            provider:ProviderEnum.SYSTEM ,
-            confirmEmail:{$exists:true}
+            provider: ProviderEnum.SYSTEM,
+            confirmEmail: { $exists: true }
         }
-    })
-}
-export const verifyForgetPasswordCode = async ({otp,email})=>{
-    const account = await findOne({
-        model:userModel,
-        filter:{email,provider:ProviderEnum.SYSTEM , confirmEmail:{$exists:true}}
-    })
-    if(!account){
-        throw NotfoundException("Invalid Account")
+    });
+
+    if (!account) {
+        throw NotfoundException("Invalid Account");
     }
 
-   return account ;
+    await sendEmailOtp({
+        email,
+        subject: EmailSubjectEnum.FORGET_PASSWORD
+    });
 
-}
+    return;
+};
+export const verifyForgetPasswordCode = async ({ otp, email }) => {
+    const account = await findOne({
+        model: userModel,
+        filter: {
+            email,
+            provider: ProviderEnum.SYSTEM,
+            confirmEmail: { $exists: true }
+        }
+    });
+
+    if (!account) {
+        throw NotfoundException("Invalid Account");
+    }
+
+    const hashOtp = await get({
+        key: UserEmailKey({
+            email,
+            subject: EmailSubjectEnum.FORGET_PASSWORD
+        })
+    });
+
+    if (!hashOtp || !await compare(otp, hashOtp)) {
+        throw ConflictException("Invalid OTP");
+    }
+
+    return account;
+};
   
    export const resetForgetPassword = async ({otp,email,password})=>{
    const account = await verifyForgetPasswordCode({otp , email})

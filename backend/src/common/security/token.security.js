@@ -120,13 +120,23 @@ export const createLoginCredentials = async ({
         refresh_token
     }
 }
-export const createRevokeToken = async ({payload})=>{
-    const consumedTime = (Math.ceil(Date.now() / 1000)) - payload.iat
-        const refreshExpiresIn = payload.iat + REFRESH_TOKEN_EXPIRES_IN
-        const ttl = refreshExpiresIn - consumedTime
-        await set({ key: userRevokeTokenKey({userId:payload.sub , jti:payload.jti}), value: payload.jti, ttl })
-        return
+
+export const createRevokeToken = async ({ payload }) => {
+    const refreshExpiresIn = payload.iat + REFRESH_TOKEN_EXPIRES_IN
+    const ttl = refreshExpiresIn - Math.floor(Date.now() / 1000)
+
+    if (ttl <= 0) return
+
+    await set({
+        key: userRevokeTokenKey({
+            userId: payload.sub,
+            jti: payload.jti
+        }),
+        value: payload.jti,
+        ttl
+    })
 }
+
 
 export const basicAuth = async ({email,password})=>{
     const account = await findOne({model:userModel, filter:{email}})

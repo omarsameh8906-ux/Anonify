@@ -29,7 +29,7 @@ router.post(
 
      async (req , res , next)=>{
 
-    const data = await createMessage(req.body , req.files , req.user)
+    const data = await createMessage(req.validate.body , req.files , req.user)
     return successResponse({res , status:201 , data})
 })
 

@@ -53,7 +53,9 @@ export const signup = (language)=>{
     body:loginSchema(language).safeExtend({
     username:generalValidationFields.username(language),
     confirmPassword:generalValidationFields.password(language),
-    phone:generalValidationFields.phone(language)
+    phone:generalValidationFields.phone(language),
+    DOB: z.coerce.date().optional(),
+    gender: generalValidationFields.gender(language).optional(),
 }).superRefine((data,ctx)=>{
     generalValidationFields.matchFields({original:"password" , copy:"confirmPassword" , data , ctx , language})
 

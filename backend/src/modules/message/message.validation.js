@@ -13,7 +13,7 @@ export const createMessage = (language)=>{
         if(!data.body.content && !data.files?.length){
             ctx.addIssue({
                 code:"custom",
-                path:[content],
+                path: ["body", "content"],
                 message: "Missing message content"
             })
         }

@@ -60,29 +60,46 @@ export const getAllMessages = async ({type , page , limit} = {} , user)=>{
 return data
 }
 
-export const getMessage = async ({messageId} , user)=>{
 
-   
+export const getMessage = async ({ messageId }, user) => {
+    const data = await messageRepository.findOne({
+        filter: {
+            _id: messageId,
+            $or: [
+                { receiverId: user._id },
+                { senderId: user._id }
+            ]
+        },
+        options: {
+            populate: {
+                path: "senderId",
+                select: "firstName lastName email image"
+            }
+        }
+    });
 
-    const data = await messageRepository.findOne({ filter:{receiverId: user._id , _id: messageId}})
-
-    if(!data){
-        throw NotfoundException("Invalid Message Id")
+    if (!data) {
+        throw NotfoundException("Invalid Message Id");
     }
- 
+
     return data;
-}
+};
 
-export const deleteMessage = async ({messageId} , user)=>{
 
-   
 
-    const data = await messageRepository.deleteOne({ filter:{receiverId: user._id , _id: messageId}})
+export const deleteMessage = async ({ messageId }, user) => {
+    const data = await messageRepository.deleteOne({
+        filter: {
+            _id: messageId,
+            receiverId: user._id
+        }
+    });
 
-    if(!data.deletedCount){
-        throw NotfoundException("Invalid MessageId")
+    if (!data.deletedCount) {
+        throw NotfoundException("Invalid Message Id");
     }
- 
+
     return data;
-}
+};
+
 
