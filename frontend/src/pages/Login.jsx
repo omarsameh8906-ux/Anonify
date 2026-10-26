@@ -129,12 +129,26 @@ export default function Login() {
             />
 
             <button
-              type="submit"
-              className="btn login-submit"
-              disabled={loading}
-            >
-              {loading ? "Signing in..." : "Sign in →"}
-            </button>
+  type="submit"
+  className="btn login-submit"
+  disabled={loading}
+>
+  {loading ? "Signing in..." : "Sign in →"}
+</button>
+
+<p
+  className="sub"
+  style={{
+    textAlign: "center",
+    marginTop: "14px",
+    marginBottom: "8px",
+  }}
+>
+  Haven't verified your email?{" "}
+  <Link to="/confirm">
+    Confirm your email
+  </Link>
+</p>
           </form>
 
           <div className="login-divider">
