@@ -11,7 +11,9 @@ export const imgUrl = (p) =>
   p && typeof p === "string" ? (p.startsWith("http") ? p : `${API}/${p.replace(/^\//, "")}`) : "";
 
 export async function request(path, { method = "GET", body, auth = false, retry = true } = {}) {
-  const headers = {};
+  const headers = {
+  "ngrok-skip-browser-warning": "true",
+};
   if (auth && tokens.access) headers.Authorization = `Bearer ${tokens.access}`;
   let payload = body;
   if (body && !(body instanceof FormData)) {
@@ -26,7 +28,10 @@ export async function request(path, { method = "GET", body, auth = false, retry 
   if (res.status === 401 && auth && retry && tokens.refresh) {
     const r = await fetch(API + "/user/rotate-token", {
       method: "POST",
-      headers: { Authorization: `Bearer ${tokens.refresh}` },
+      headers: {
+  Authorization: `Bearer ${tokens.refresh}`,
+  "ngrok-skip-browser-warning": "true",
+},
     });
     if (r.ok) {
       const d = (await r.json()).data;
