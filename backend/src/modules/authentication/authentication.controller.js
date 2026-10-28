@@ -48,7 +48,7 @@ router.post("/signup-with-gmail" ,async (req, res, next) => {
     const {status , data} = await signupWithGmail(req.body ,  `${req.protocol}://${req.host}`)
     return successResponse({ res, status: 201, data })
 })
-const loginLimiter = generateRateLimiter({limit: 5 , ttl : 3 , skipSuccessfulRequests:true})
+const loginLimiter = generateRateLimiter({limit: 5 , ttl : 60 , skipSuccessfulRequests:true})
 router.post("/login", loginLimiter ,validation(validators.login) ,async (req, res, next) => {
 
     const data = await login(req.validate.body, `${req.protocol}://${req.host}`)
